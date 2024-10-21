@@ -24,7 +24,7 @@ runs:
         - name: Validate input
           run: exit 1
           shell: bash
-          if: inputs.SAMWISE_CLI_GIT_KEY == "" && (inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH == ""
+          if: inputs.SAMWISE_CLI_GIT_KEY == '' && (inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH == ''
         - name: Check out code
           uses: actions/checkout@v4
           with:

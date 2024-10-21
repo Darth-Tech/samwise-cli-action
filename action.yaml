@@ -1,0 +1,61 @@
+name: samwise-tf-module-update-report
+description: Action generates and updates the PR with the comment of the updates available.
+inputs:
+    SAMWISE_CLI_GIT_USER:
+        description: 'Git username to use while retrieving repository to check for module updates'
+        required: true
+        default: ''
+    SAMWISE_CLI_GIT_KEY:
+        description: 'Git PAT to use while retrieving module repositories to check for module updates'
+        required: false
+        default: ''
+    SAMWISE_CLI_GIT_SSH_KEY_PATH:
+        description: 'Git SSH key to use while retrieving module repositories to check for module updates'
+        required: false
+        default: ''
+    GIT_ACCESS_TOKEN:
+        description: 'Git PAT to the repo running the action to update the PR comment'
+        required: true
+        default: ''
+
+runs:
+    using: "composite"
+    steps:
+        - name: Validate input
+          run: exit 1
+          shell: bash
+          if: ${{ inputs.SAMWISE_CLI_GIT_KEY }} == "" && ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }} == ""
+        - name: Check out code
+          uses: actions/checkout@v4
+          with:
+              fetch-depth: 0
+        -   name: Install samwise
+            shell: bash
+            run: |
+              curl -L https://github.com/Darth-Tech/samwise-cli/releases/download/v0.5.0/samwise-cli_0.5.0_linux_amd64.tar.gz | tar zx
+              chmod +x samwise-cli
+        - name: Run tool
+          shell: bash
+          env:
+              SAMWISE_CLI_GIT_USER: ${{ inputs.SAMWISE_CLI_GIT_USER }}
+              SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}
+              SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }}
+
+          run: |
+              ./samwise-cli checkForUpdates  --path . -d 0 --ignore .git --ignore .github --ignore .idea -o csv --latest-version
+              npm install -g csv-to-markdown-table
+              csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
+              modulesToBeUpdates=$(wc -l < module_report.csv | xargs )
+              echo "$(echo '<details><summary><b>Terraform Module report: modulesToBeUpdated module updates are available</b></summary>
+               ' | cat - terraform-module-updates-message.md)" > terraform-module-updates-message.md
+              sed -i "s/modulesToBeUpdated/${modulesToBeUpdates}/g" terraform-module-updates-message.md
+              echo "
+               </details>" >> terraform-module-updates-message.md
+              cat terraform-module-updates-message.md
+        - name: Post available updates to PR
+          uses: mshick/add-pr-comment@v2.8.2
+          with:
+              repo-token: ${{ inputs.GIT_ACCESS_TOKEN }}
+              message-id: module-report
+              allow-repeats: false
+              message-path: "terraform-module-updates-message.md"

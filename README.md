@@ -3,6 +3,9 @@ GitHub action to check your outdated custom Tf modules and update the report to 
 
 
 ## Usage
+
+This action is configured to update PR comments. Using it on "push" type pipelines is not feasible, although the report will be visible in the logs.
+
 ```yaml
 - name: samwise-tf-modules-update-report
   uses: Darth-Tech/samwise-cli-action@v0.2.0

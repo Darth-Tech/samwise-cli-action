@@ -54,7 +54,7 @@ runs:
               curl -L https://github.com/Darth-Tech/samwise-cli/releases/download/v0.5.0/samwise-cli_0.5.0_linux_amd64.tar.gz | tar zx
               chmod +x samwise-cli
         - name: Run tool
-          uses: actions/setup-node@v4
+          shell: bash
           env:
               SAMWISE_CLI_GIT_USER: ${{ inputs.SAMWISE_CLI_GIT_USER }}
               SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}

@@ -17,6 +17,18 @@ inputs:
         description: 'Git PAT to the repo running the action to update the PR comment'
         required: true
         default: ''
+    DEPTH:
+        description: 'The depth of directory to be scanned. -1 for complete scanning. 0 for only the root directory of the path. Default is 0.'
+        required: true
+        default: '0'
+    PATH:
+        description: 'Path of the directory to scan for terraform modules. Default is .(current directory)'
+        required: true
+        default: '.'
+    VERBOSITY:
+        description: 'Logger verbosity. Accepted values: info, warn, debug, trace, fatal, panic'
+        required: true
+        default: 'warn'
 
 runs:
     using: "composite"
@@ -40,9 +52,13 @@ runs:
               SAMWISE_CLI_GIT_USER: ${{ inputs.SAMWISE_CLI_GIT_USER }}
               SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}
               SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }}
+              DEPTH: ${{ inputs.DEPTH }}
+              PATH: ${{ inputs.PATH }}
+              IGNORE: ${{ inputs.IGNORE }}
+              VERBOSITY: ${{ inputs.VERBOSITY }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path . -d 0 --ignore .git --ignore .github --ignore .idea -o csv --latest-version
+              ./samwise-cli checkForUpdates  --path "${PATH}" -d "${DEPTH}" --ignore="${IGNORE}" -o csv --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )

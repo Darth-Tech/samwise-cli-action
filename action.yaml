@@ -1,5 +1,8 @@
 name: samwise-tf-module-update-report
 description: Action generates and updates the PR with the comment of the updates available.
+branding:
+    icon: 'bar-chart-2'
+    color: 'green'
 inputs:
     SAMWISE_CLI_GIT_USER:
         description: 'Git username to use while retrieving repository to check for module updates'

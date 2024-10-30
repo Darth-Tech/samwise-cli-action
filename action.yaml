@@ -59,13 +59,10 @@ runs:
               SAMWISE_CLI_GIT_USER: ${{ inputs.SAMWISE_CLI_GIT_USER }}
               SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}
               SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }}
-              DEPTH: ${{ inputs.DEPTH }}
-              PATH: ${{ inputs.PATH }}
-              IGNORE: ${{ inputs.IGNORE }}
               VERBOSITY: ${{ inputs.VERBOSITY }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path "${{ inputs.PATH }}" -d ${{ inputs.DEPTH }} --ignore=${{ inputs.IGNORE }} -o csv --latest-version
+              ./samwise-cli checkForUpdates  --path ${{ inputs.REPO_PATH }} -d ${{ inputs.DEPTH }} --ignore=${{ inputs.IGNORE }} -o csv --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )

@@ -60,7 +60,7 @@ runs:
               SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}
               SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }}
               DEPTH: ${{ inputs.DEPTH }}
-              REPO_PATH: ${{ inputs.PATH }}
+              REPO_PATH: ${{ inputs.REPO_PATH }}
               IGNORE: ${{ inputs.IGNORE }}
               VERBOSITY: ${{ inputs.VERBOSITY }}
 

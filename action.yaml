@@ -51,7 +51,7 @@ runs:
         -   name: Install samwise
             shell: bash
             run: |
-              curl -L https://github.com/Darth-Tech/samwise-cli/releases/download/v0.5.0/samwise-cli_0.5.0_linux_amd64.tar.gz | tar zx
+              curl -L https://github.com/Darth-Tech/samwise-cli/releases/download/v0.6.0/samwise-cli_0.6.0_linux_amd64.tar.gz | tar zx
               chmod +x samwise-cli
         - name: Run tool
           shell: bash
@@ -65,7 +65,7 @@ runs:
               VERBOSITY: ${{ inputs.VERBOSITY }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path ${{ inputs.REPO_PATH }} -d ${{ inputs.DEPTH }} --ignore=${{ inputs.IGNORE }} -o csv --latest-version
+              ./samwise-cli checkForUpdates  --path ${{ inputs.REPO_PATH }} -d ${{ inputs.DEPTH }} --ignore=${{ inputs.IGNORE }} -o csv --verbosity ${{ inputs.VERBOSITY }} --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )

@@ -61,7 +61,7 @@ runs:
               VERBOSITY: ${{ inputs.VERBOSITY }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path ${PATH} -d ${DEPTH} --ignore=${IGNORE} -o csv --latest-version
+              ./samwise-cli checkForUpdates  --path $PATH -d $DEPTH --ignore=$IGNORE -o csv --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )

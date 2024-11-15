@@ -28,6 +28,10 @@ inputs:
         description: 'Path of the directory to scan for terraform modules. Default is .(current directory)'
         required: true
         default: '.'
+    ignore:
+        description: 'Directories to ignore while search for the tf modules.'
+        required: true
+        default: '.git,github'
     verbosity:
         description: 'Logger verbosity. Accepted values: info, warn, debug, trace, fatal, panic'
         required: true

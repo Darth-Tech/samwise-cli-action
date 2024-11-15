@@ -4,31 +4,31 @@ branding:
     icon: 'bar-chart-2'
     color: 'green'
 inputs:
-    SAMWISE_CLI_GIT_USER:
+    samwise-cli-git-user:
         description: 'Git username to use while retrieving repository to check for module updates'
         required: true
         default: ''
-    SAMWISE_CLI_GIT_KEY:
+    samwise-cli-git-key:
         description: 'Git PAT to use while retrieving module repositories to check for module updates'
         required: false
         default: ''
-    SAMWISE_CLI_GIT_SSH_KEY_PATH:
+    samwise-cli-git-ssh-key-path:
         description: 'Git SSH key to use while retrieving module repositories to check for module updates'
         required: false
         default: ''
-    GIT_ACCESS_TOKEN:
+    git-access-token:
         description: 'Git PAT to the repo running the action to update the PR comment'
         required: true
         default: ''
-    DEPTH:
+    depth:
         description: 'The depth of directory to be scanned. -1 for complete scanning. 0 for only the root directory of the path. Default is 0.'
         required: true
         default: '0'
-    PATH:
+    repo-path:
         description: 'Path of the directory to scan for terraform modules. Default is .(current directory)'
         required: true
         default: '.'
-    VERBOSITY:
+    verbosity:
         description: 'Logger verbosity. Accepted values: info, warn, debug, trace, fatal, panic'
         required: true
         default: 'warn'
@@ -39,7 +39,7 @@ runs:
         - name: Validate input
           run: exit 1
           shell: bash
-          if: inputs.SAMWISE_CLI_GIT_KEY == '' && inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH == ''
+          if: inputs.samwise-cli-git-key == '' && inputs.samwise-cli-git-ssh-key-path == ''
         - name: Setup Nodejs
           uses: actions/setup-node@v4
           with:
@@ -56,16 +56,16 @@ runs:
         - name: Run tool
           shell: bash
           env:
-              SAMWISE_CLI_GIT_USER: ${{ inputs.SAMWISE_CLI_GIT_USER }}
-              SAMWISE_CLI_GIT_KEY: ${{ inputs.SAMWISE_CLI_GIT_KEY }}
-              SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.SAMWISE_CLI_GIT_SSH_KEY_PATH }}
-              DEPTH: ${{ inputs.DEPTH }}
-              REPO_PATH: ${{ inputs.REPO_PATH }}
-              IGNORE: ${{ inputs.IGNORE }}
-              VERBOSITY: ${{ inputs.VERBOSITY }}
+              SAMWISE_CLI_GIT_USER: ${{ inputs.samwise-cli-git-user }}
+              SAMWISE_CLI_GIT_KEY: ${{ inputs.git-access-token }}
+              SAMWISE_CLI_GIT_SSH_KEY_PATH: ${{ inputs.samwise-cli-git-ssh-key-path }}
+              DEPTH: ${{ inputs.verbosity }}
+              REPO_PATH: ${{ inputs.repo-path }}
+              IGNORE: ${{ inputs.ignore }}
+              VERBOSITY: ${{ inputs.verbosity }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path ${{ inputs.REPO_PATH }} -d ${{ inputs.DEPTH }} --ignore=${{ inputs.IGNORE }} -o csv --verbosity ${{ inputs.VERBOSITY }} --latest-version
+              ./samwise-cli checkForUpdates  --path ${{ inputs.repo-path }} -d ${{ inputs.verbosity }} --ignore=${{ inputs.ignore }} -o csv --verbosity ${{ inputs.verbosity }} --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )
@@ -78,7 +78,7 @@ runs:
         - name: Post available updates to PR
           uses: mshick/add-pr-comment@v2.8.2
           with:
-              repo-token: ${{ inputs.GIT_ACCESS_TOKEN }}
+              repo-token: ${{ inputs.git-access-token }}
               message-id: module-report
               allow-repeats: false
               message-path: "terraform-module-updates-message.md"

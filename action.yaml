@@ -69,7 +69,7 @@ runs:
               VERBOSITY: ${{ inputs.verbosity }}
 
           run: |
-              ./samwise-cli checkForUpdates  --path ${{ inputs.repo-path }} -d ${{ inputs.verbosity }} --ignore=${{ inputs.ignore }} -o csv --verbosity ${{ inputs.verbosity }} --latest-version
+              ./samwise-cli checkForUpdates  --path ${{ inputs.repo-path }} -d ${{ inputs.depth }} --ignore=${{ inputs.ignore }} -o csv --verbosity ${{ inputs.verbosity }} --latest-version
               npm install -g csv-to-markdown-table
               csv-to-markdown-table --delim ',' --headers < module_report.csv > terraform-module-updates-message.md
               modulesToBeUpdates=$(wc -l < module_report.csv | xargs )
